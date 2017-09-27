@@ -1,0 +1,64 @@
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <!--<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>-->
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <p id="any_msg"></p>
+          <div class="text-center" style="background-color: lightblue;">
+              <strong style="color:#e04218;font-size: xx-large;">hack_py</strong>
+          </div>
+          <br>
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#login" role="tab">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#register" role="tab">Register</a>
+          </li>
+        </ul>
+        <br>
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div class="tab-pane active" id="login" role="tabpanel">
+            <form action="/login/" method="post">
+              <div class="form-group">
+                <input type="text" name="user_name" required class="form-control" id="login-username" placeholder="@username input">
+              </div>
+              {% csrf_token %}
+              <div class="form-group">
+                <input type="password" name="password" required class="form-control" id="login-pass" placeholder="@password input">
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Login</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="tab-pane" id="register" role="tabpanel">
+            <form action="/register/" method="post">
+              <div class="form-group">
+                <input type="email" name="email" required class="form-control" id="reg-email" placeholder="@email input">
+              </div>
+              <div class="form-group">
+                <input type="text" name="user_name" required class="form-control" id="reg-username" placeholder="@username input">
+              </div>
+              {% csrf_token %}
+              <div class="form-group">
+                <input type="password" name="password" required class="form-control" id="reg-pass" placeholder="@password input">
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Register</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,98 @@
+{% extends "home.html" %}
+{% block body %}
+<div class="jumbotron" style="padding:7px;background-color:#f9f3f3; border-radius: 0px;">
+        <div class="row col-md-12">
+             <div class="col-md-10">
+                <p style="font-size: 14px;">
+                    <a href="{{news.link_href}}" target="_blank">{{news.story_text}}</a>
+                    <span style="font-size:12px; color:grey;">
+                    <br>
+                    {{news.score}} points by {{news.hn_user}} | {{news.age}} hours ago |
+                    <a href="/comment/{{news.id}}">{{news.total_comments}}</a>
+                    </span>
+                </p>
+                 <form action="/add/comment/" method="post">
+                     {% csrf_token %}
+                     <input type="text" value="{{news.id}}" name="news_id" hidden>
+                     <input type="text" value="default" name="hn_user" hidden>
+                     <textarea cols="50" name="text" rows="3" placeholder="" required></textarea>
+                     <br>
+                     {% if user.is_authenticated %}
+                     <button type="submit">add comment</button>
+                     {% else %}
+                     <button type="button" onclick="login_required('> Login required for this action.', )">add comment</button>
+                     {% endif %}
+                 </form>
+            </div>
+        </div>
+        <br>
+        {% for comment in comments %}
+        <div class="row">
+            {% if comment.is_reply %}
+                <div style="margin-left:{{comment.reply_nested_level}}px;">
+                    <p style="font-size:14px;">
+                        <span style="color:grey">{{comment.hn_user}} | {{comment.age}}</span>
+                        <br><span id="{{comment.id}}">
+                                {{comment.text}}
+                            </span>
+                        <br>
+                        <a href="javascript:void(0);" data-comm-depth="{{comment.reply_nested_level}}"
+                           data-user="{{comment.hn_user}}" data-news-id="{{comment.news_id}}"
+                           data-cid="{{comment.id}}" class="link_reply" data-age="{{comment.age}}"
+                           style="font-size:12px;">reply</a>
+                    </p>
+
+                </div>
+            {% else %}
+                <div class="col-md-10">
+                    <p style="font-size:14px;">
+                        <span style="color:grey">{{comment.hn_user}} | {{comment.age}}</span>
+                        <br><span id="{{comment.id}}">
+                                {{comment.text}}
+                            </span>
+                        <br>
+                        <a href="javascript:void(0);" data-comm-depth="{{comment.reply_nested_level}}"
+                           data-user="{{comment.hn_user}}" data-news-id="{{comment.news_id}}"
+                           data-cid="{{comment.id}}" class="link_reply" data-age="{{comment.age}}"
+                           data-score="" style="font-size:12px;">reply</a>
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+        <br>
+        {% endfor %}
+    <!--End jumboo-->
+    </div>
+    <form action="" method="post" id="reply_hidden_form" hidden>
+        {% csrf_token %}
+        <input name="news_id" id="news_f" value="" />
+        <input name="id" id="comment_f" value="" />
+        <input name="hn_user" id="user_f" value="" />
+        <input name="reply_nested_level" id="reply_nested_level_f" value="" />
+        <input name="age" id="age_f" value="" />
+        <textarea name="text" id="text_f"></textarea>
+
+        <button type="submit" id="reply_submit"></button>
+    </form>
+<script>
+    $('.link_reply').click(function(){
+        var news_id = $(this).data('news-id');
+        var comment_id = $(this).data('cid');
+        var text = $('#'+comment_id).text();
+        var hn_user = $(this).data('user');
+        var comm_depth = $(this).data('comm-depth');
+        var age = $(this).data('age');
+
+        $('#news_f').val(news_id);
+        $('#user_f').val(hn_user);
+        $('#reply_nested_level_f').val(comm_depth);
+        $('#comment_f').val(comment_id);
+        $('#age_f').val(age);
+        $('#reply_hidden_form').attr('action', '/add/reply/?post_in='+comment_id);
+
+        $('#text_f').text(text);
+
+        $('#reply_submit').click();
+    });
+</script>
+{% endblock %}
