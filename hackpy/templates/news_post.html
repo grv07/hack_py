@@ -1,0 +1,8 @@
+{% extends "home.html" %}
+{% block body %}
+    <form action="/add/news/" method="post">
+        {{form.as_p}}
+        {% csrf_token %}
+        <button type="submit">submit</button>
+    </form>
+{% endblock %}

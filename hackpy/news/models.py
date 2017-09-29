@@ -2,6 +2,10 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch.dispatcher import receiver
+from django.contrib.auth.models import User
+import utils
 
 
 class News(models.Model):
@@ -14,6 +18,7 @@ class News(models.Model):
     total_comments = models.IntegerField(default=0)
     rank = models.IntegerField(default=0)
     show_on_site = models.BooleanField(default=True)
+    is_crawled = models.BooleanField(default=True)
 
     class Meta:
         ordering = ['rank']
@@ -24,6 +29,9 @@ class News(models.Model):
 
     def __unicode__(self):
         return self.story_text
+
+    def get_time_diff(self):
+        return utils.get_time_diff(self)
 
 
 class Comment(models.Model):
@@ -46,4 +54,26 @@ class Comment(models.Model):
     def __unicode__(self):
         return self.text
 
+    def save(self, *args, **kwargs):
+        if self.news and not self.news.is_crawled:
+            self.news.total_comments += 1
+            self.news.save()
+        super(Comment, self).save(*args, **kwargs)
+
+    def get_time_diff(self):
+        return utils.get_time_diff(self)
+
+
+class UpVoteCounter(models.Model):
+    count = models.IntegerField(default=1)
+    user = models.ForeignKey(User)
+    news = models.ForeignKey(News, null=True)
+    comment = models.ForeignKey(Comment, null=True)
+
+
+@receiver(pre_delete, sender=Comment)
+def _mymodel_delete(sender, instance, **kwargs):
+    if instance.news:
+        instance.news.total_comments -= 1
+        instance.news.save()
 # Create your models here.

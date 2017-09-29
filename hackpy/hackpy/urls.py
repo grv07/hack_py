@@ -25,6 +25,8 @@ urlpatterns = [
     url(r'^add/reply/$', reply_form),
     url(r'^register/$', register_home),
     url(r'^add/news/$', upload_news),
+    url(r'^upvote/(?P<user_id>\d+)/(?P<news_id>\d+)/$', up_vote_news),
+    url(r'^crawl-now/$', scrawl_blocking_scraping),
 
     url(r'^login/$', login_home),
     url(r'^logout/$', logout_home),

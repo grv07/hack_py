@@ -4,11 +4,13 @@ from models import *
 
 
 class NewsForm(ModelForm):
-    hn_user = forms.CharField(required=True, show_hidden_initial=True)
+    # hn_user = forms.CharField(required=True, widget=forms.HiddenInput)
+    link_href = forms.URLField(required=True)
+    story_text = forms.CharField(widget=forms.Textarea)
 
     class Meta:
         model = News
-        fields = ['story_text', 'link_href', 'hn_user']
+        fields = ['link_href', 'story_text']
 
 
 class CommentForm(ModelForm):

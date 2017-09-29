@@ -6,6 +6,16 @@ from scrapy.crawler import CrawlerProcess
 from news_bot.items import NewsBotItem, CommentBotItem
 
 
+def represents_int(s):
+    try:
+        if s:
+            int(s)
+            return True
+        raise ValueError
+    except ValueError:
+        return False
+
+
 class CommentSpider(BaseSpider):
     name = "comment"
     allowed_domains = ["news.ycombinator.com"]
@@ -64,9 +74,11 @@ class ExampleSpider(BaseSpider):
 
     def parse(self, response):
         description = response.xpath("//table[@class='itemlist']/tr[not(re:test(@class, "
-                                     "'(spacer)'))]").extract()[:30]
+                                     "'(spacer)'))]").extract()
         row = self.get_default_row_dict()
+        # print description
         for i, v in enumerate(description):
+            index = i
             if not row['rank']:
                 value = Selector(text=v).xpath('//td[1]/span[@class="rank"]/text()').extract_first()
                 row['rank'] = int(value.replace('.', '')) if value else 0
@@ -92,21 +104,20 @@ class ExampleSpider(BaseSpider):
                 value = Selector(text=v).xpath(
                     '//td[@class="subtext"]/a[contains(@href, "item?id=")]/text()').extract_first()
                 if value:
-                    row['total_comments'] = value.encode('ascii', 'ignore').\
-                        replace('comments', '') if value else ''
+                    value = value.encode('ascii', 'ignore').replace('comments', '') if value else ''
+                    value = value.encode('ascii', 'ignore').replace('comment', '') if value else ''
+                    row['total_comments'] = int(value) if represents_int(value) else 0
 
             if not row['score']:
                 value = Selector(text=v).xpath('//span[@class="score"]/text()').extract_first()
                 row['score'] = int(value.split(' ')[0]) if value else 0
-            # total_comments
-            # news-link
 
             if not row['comment_url_id']:
                 value = Selector(text=v).xpath('//tr[@class="athing"]/@id').extract_first()
-                row['comment_url_id'] = int(value) if value else 0
+                row['comment_url_id'] = int(value) if represents_int(value) else 0
 
-            if all(row.values()):
-                print row
+            if all([None for i, v in row.items() if v==None]):
+                print 'Go for save >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
                 data = row.copy()
                 row = self.get_default_row_dict()
                 self.comment_url.append('https://news.ycombinator.com/item?id=15318440')
@@ -117,3 +128,6 @@ class ExampleSpider(BaseSpider):
                 request.meta['item'] = item
                 request.meta['news_id'] = int(news_id)
                 yield request
+
+            if index % 2:
+                row = self.get_default_row_dict()

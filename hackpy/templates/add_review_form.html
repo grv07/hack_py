@@ -8,13 +8,13 @@
                     <span style="font-size:12px; color:grey;">
                     <br>
                     {{comment.hn_user}} | {{comment.age}}
-                    <a href="/comment/{{news.id}}">{{news.total_comments}}</a>
+                    <!--<a href="/comment/{{news.id}}">{{news.total_comments}}</a>-->
                     </span>
                 </p>
                  <form action="/add/comment/" method="post">
                      {% csrf_token %}
                      <input type="text" value="{{comment.news_id}}" name="news_id" hidden>
-                     <input type="text" value="{{comment.hn_user}}" name="hn_user" hidden>
+                     <input type="text" value="{{request.user.username}}" name="hn_user" hidden>
                      <input type="text" value="{{comment.comment}}" name="parent_comment" hidden>
                      <input type="text" value="{{comment.reply_nested_level|add:'40'}}" name="reply_nested_level" hidden>
                      <input type="text" value="{{comment.id}}" name="parent_comment_id" hidden>

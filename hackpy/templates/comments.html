@@ -7,14 +7,14 @@
                     <a href="{{news.link_href}}" target="_blank">{{news.story_text}}</a>
                     <span style="font-size:12px; color:grey;">
                     <br>
-                    {{news.score}} points by {{news.hn_user}} | {{news.age}} hours ago |
-                    <a href="/comment/{{news.id}}">{{news.total_comments}}</a>
+                    {{news.score}} points by {{news.hn_user}} | {{news.get_time_diff}} |
+                    <a href="/comment/{{news.id}}">{{news.total_comments|default:0}} comments</a>
                     </span>
                 </p>
                  <form action="/add/comment/" method="post">
                      {% csrf_token %}
                      <input type="text" value="{{news.id}}" name="news_id" hidden>
-                     <input type="text" value="default" name="hn_user" hidden>
+                     <input type="text" value="{{request.user.username}}" name="hn_user" hidden>
                      <textarea cols="50" name="text" rows="3" placeholder="" required></textarea>
                      <br>
                      {% if user.is_authenticated %}
@@ -31,14 +31,14 @@
             {% if comment.is_reply %}
                 <div style="margin-left:{{comment.reply_nested_level}}px;">
                     <p style="font-size:14px;">
-                        <span style="color:grey">{{comment.hn_user}} | {{comment.age}}</span>
+                        <span style="color:grey">{{comment.hn_user}} | {{comment.get_time_diff}}</span>
                         <br><span id="{{comment.id}}">
                                 {{comment.text}}
                             </span>
                         <br>
                         <a href="javascript:void(0);" data-comm-depth="{{comment.reply_nested_level}}"
                            data-user="{{comment.hn_user}}" data-news-id="{{comment.news_id}}"
-                           data-cid="{{comment.id}}" class="link_reply" data-age="{{comment.age}}"
+                           data-cid="{{comment.id}}" class="link_reply" data-age="{{comment.get_time_diff}}"
                            style="font-size:12px;">reply</a>
                     </p>
 
@@ -46,14 +46,14 @@
             {% else %}
                 <div class="col-md-10">
                     <p style="font-size:14px;">
-                        <span style="color:grey">{{comment.hn_user}} | {{comment.age}}</span>
+                        <span style="color:grey">{{comment.hn_user}} | {{comment.get_time_diff}}</span>
                         <br><span id="{{comment.id}}">
                                 {{comment.text}}
                             </span>
                         <br>
                         <a href="javascript:void(0);" data-comm-depth="{{comment.reply_nested_level}}"
                            data-user="{{comment.hn_user}}" data-news-id="{{comment.news_id}}"
-                           data-cid="{{comment.id}}" class="link_reply" data-age="{{comment.age}}"
+                           data-cid="{{comment.id}}" class="link_reply" data-age="{{comment.get_time_diff}}"
                            data-score="" style="font-size:12px;">reply</a>
                     </p>
                 </div>

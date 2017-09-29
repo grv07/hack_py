@@ -21,7 +21,7 @@
           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
-          <strong>error: </strong> {{ message }}
+          <strong>info: </strong> {{ message }}
         </div>
         {% endfor %}
     {% endif %}
@@ -34,7 +34,7 @@
                 <a href="/" style="color:#e04218"><strong>hack_py</strong></a>
             &nbsp;|&nbsp;<a href="/" style="color:#e04218">home</a>
             {% if request.user.is_authenticated %}
-            &nbsp;|&nbsp;<a href="/" style="color:#e04218">post news</a>
+            &nbsp;|&nbsp;<a href="/add/news/" style="color:#e04218">post news</a>
             {% endif %}
         </div>
         <div class="float-right col-md-3">
@@ -53,17 +53,29 @@
     <div class="jumbotron" style="padding:7px; background-color:#f9f3f3; border-radius: 0px;">
         {% for news in newses%}
         <div class="row col-md-12">
-            <!--<div class="col-md-1">-->
-                <p style="font-size:13px;"><span class="rank">{{news.rank}}</span>
-                    <a href=""><i class="fa fa-sort-up fa-1x"></i></a>
-                    <a href=""><i class="fa fa-sort-desc fa-1x"></i></a>
+                <p style="font-size:13px;"><span class="rank">{{ forloop.counter }}</span>
+                    {% if request.user.is_authenticated %}
+                        {% if not news.id in u_v_c %}
+                        <a href="/upvote/{{request.user.id}}/{{news.id}}/">
+                            <i class="fa fa-sort-up fa-1x"></i>
+                        </a>
+                        {% else %}
+                        <a href="javascript:void(0)">
+                            <i class="fa fa-sort-up fa-1x" style="color:red"></i>
+                        </a>
+                        {% endif %}
+                    {% else %}
+                    <a href="javascript:void(0)" onclick="login_required('> please login to upvote', '/upvote/{{request.user.id}}/{{news.id}}/')">
+                        <i class="fa fa-sort-up fa-1x"></i>
+                    </a>
+                    {% endif %}
                 </p>
             <div class="col-md-10">
                 <p style="font-size: 14px;">
                     <a href="{{news.link_href}}" target="_blank">{{news.story_text}}</a>
                 <span style="font-size:12px; color:grey;">
                     <br>
-                    {{news.score}} points by {{news.hn_user}} {{news.age}} hours ago |
+                    {{news.score}} points by {{news.hn_user}} {{news.get_time_diff}} |
                     <a href="/comment/{{news.id}}">{{news.total_comments}} comments</a>
                 </span>
                 </p>

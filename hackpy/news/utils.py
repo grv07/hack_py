@@ -1,4 +1,6 @@
 from collections import OrderedDict
+import datetime
+from django.utils.timezone import utc
 
 
 def reply_on_comments(comments):
@@ -34,3 +36,16 @@ def get_sequence(data, pre_key):
             seq_data = get_sequence(data, d)
             _temp_final.extend(seq_data)
     return _temp_final
+
+
+def get_time_diff(self):
+    if self.created_time:
+        now = datetime.datetime.utcnow().replace(tzinfo=utc)
+        timediff = now - self.created_time
+        _diff_sec = timediff.total_seconds()
+        if _diff_sec < 60 :
+            return str(int(round(timediff.total_seconds()))) + " sec ago"
+        elif (_diff_sec/60) < 59:
+            return str(int(round(timediff.total_seconds() / 60))) + " minutes ago"
+        else:
+            return str(int(round((timediff.total_seconds() / 60) / 60, 0))) + " hours ago"
