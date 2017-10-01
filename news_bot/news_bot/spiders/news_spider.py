@@ -1,8 +1,6 @@
 from scrapy.spiders import BaseSpider
 from scrapy.selector import Selector
-import scrapy
-from scrapy.crawler import CrawlerProcess
-
+import scrapy, urlparse
 from news_bot.items import NewsBotItem, CommentBotItem
 
 
@@ -51,6 +49,10 @@ class ExampleSpider(BaseSpider):
             if not comment_dict.setdefault('hn_user', None):
                 value = Selector(text=v).xpath('//div/span[@class="comhead"]/a/text()').extract_first()
                 comment_dict['hn_user'] = value
+            if not comment_dict.setdefault('hn_id_code', None):
+                value = Selector(text=v).xpath('//div[@class="reply"]/p/font/u/a/@href').extract_first()
+                par = urlparse.parse_qs(urlparse.urlparse(value).query) if value else {'id': None}
+                comment_dict['hn_id_code'] = par.get('id', [0])[0]
             if not comment_dict.setdefault('text', None):
                 value = Selector(text=v).xpath('//div[@class="comment"]/span/text()').extract_first('')
                 value += Selector(text=v).xpath('//div[@class="comment"]/span/i/text()').extract_first('')
@@ -74,7 +76,7 @@ class ExampleSpider(BaseSpider):
 
     def parse(self, response):
         description = response.xpath("//table[@class='itemlist']/tr[not(re:test(@class, "
-                                     "'(spacer)'))]").extract()
+                                     "'(spacer)'))]").extract()[:3]
         row = self.get_default_row_dict()
         # print description
         for i, v in enumerate(description):
@@ -125,9 +127,9 @@ class ExampleSpider(BaseSpider):
                 item = NewsBotItem(data)
                 request = scrapy.Request(url='https://news.ycombinator.com/item?id='+str(news_id),
                                          callback=self.parse_comment)
-                # request.meta['item'] = item
-                # request.meta['news_id'] = int(news_id)
-                yield item
+                request.meta['item'] = item
+                request.meta['news_id'] = int(news_id)
+                yield request
 
             if index % 2:
                 row = self.get_default_row_dict()

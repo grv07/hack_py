@@ -138,6 +138,7 @@ def add_comment(request):
         if cm_form.is_valid():
             comment = cm_form.save(commit=False)
             comment.news_id = news_id
+            comment.is_crawled = False
             comment.parent_comment_id = parent_comment_id if parent_comment_id else None
             comment.save()
             messages.add_message(request, messages.INFO, 'Comment has been posted successfully.')

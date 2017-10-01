@@ -13,14 +13,12 @@ class NewsBotPipeline(object):
 
     def process_item(self, item, spider):
         if isinstance(item, NewsBotItem):
-            # print item
             news_id = item['hn_id_code']
             try:
                 from datetime import datetime
                 obj = News.objects.get(hn_id_code=news_id)
-                print obj
                 obj.rank = item.get('rank', 0)
-                obj.total_comment = item.get('total_comments', 0)
+                obj.total_comments = item.get('total_comments', 0)
                 obj.score = item.get('score', 0)
                 obj.latest_created_time = datetime.now()
                 obj.save()
@@ -32,9 +30,12 @@ class NewsBotPipeline(object):
 
         elif isinstance(item, CommentBotItem):
             news_id = item['news_id']
-            item['news'] = self.last_save_news_obj[str(news_id)][0]
-            item['parent_comment'] = self.last_save_news_obj[str(news_id)][1]
-            item = item.save()
+            try:
+                item = Comment.objects.get(hn_id_code=item['hn_id_code'])
+            except Exception as e:
+                item['news'] = self.last_save_news_obj[str(news_id)][0]
+                item['parent_comment'] = self.last_save_news_obj[str(news_id)][1]
+                item = item.save()
             self.last_save_news_obj[str(news_id)][1] = item
         return item
 

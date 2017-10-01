@@ -45,7 +45,9 @@ class Comment(models.Model):
     is_reply = models.BooleanField(default=False)
     reply_nested_level = models.IntegerField(default=0)
     rank = models.IntegerField(default=0)
+    is_crawled = models.BooleanField(default=True)
     parent_comment = models.ForeignKey('news.Comment', null=True)
+    hn_id_code = models.CharField(max_length=150)
 
     show_on_site = models.BooleanField(default=True)
     created_time = models.DateTimeField(auto_now_add=True)
@@ -57,7 +59,7 @@ class Comment(models.Model):
         return self.text
 
     def save(self, *args, **kwargs):
-        if self.news:
+        if self.news and not self.is_crawled:
             self.news.total_comments += 1
             self.news.save()
         super(Comment, self).save(*args, **kwargs)
@@ -78,5 +80,5 @@ def _mymodel_delete(sender, instance, **kwargs):
     if instance.news:
         instance.news.total_comments -= 1
         instance.news.save()
-        
+
 # Create your models here.
