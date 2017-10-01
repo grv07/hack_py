@@ -12,7 +12,7 @@ from news.models import News, Comment
 
 class NewsBotItem(DjangoItem):
     # define the fields for your item here like:
-    comment_url_id = scrapy.Field()
+    hn_id_code = scrapy.Field()
     django_model = News
 
 

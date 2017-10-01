@@ -24,25 +24,29 @@ def register_home(request):
         user_name = request.POST.get('user_name')
         email = request.POST.get('email')
         password = request.POST.get('password')
-        try:
-            user = User.objects.get(Q(username=user_name) | Q(email=email))
-            if user.username == user_name:
-                messages.add_message(request, messages.ERROR, 'please select unique username')
+        r_f = RegisterForm(request.POST)
+        if r_f.is_valid():
+            try:
+                user = User.objects.filter(Q(username=user_name) | Q(email=email))[0]
+                if user.username == user_name:
+                    messages.add_message(request, messages.ERROR, 'please select unique username')
+                elif user.email == email:
+                    messages.add_message(request, messages.ERROR, 'please select unique email')
                 return redirect(home)
-            elif user.email == email:
-                messages.add_message(request, messages.ERROR, 'please select unique email')
-                return redirect(home)
-        except User.DoesNotExist:
-            print 'good to go ..'
-        try:
-            User.objects.create_user(username=user_name, password=password, email=email)
-            user = authenticate(request, username=user_name, password=password)
-            if user:
-                if user.is_active:
-                    auth_login(request, user)
-        except Exception as e:
-            print e.args
-            messages.add_message(request, messages.ERROR, 'Please try again after some time.')
+            except User.DoesNotExist:
+                print 'good to go ..'
+                pass
+            try:
+                User.objects.create_user(username=user_name, password=password, email=email)
+                user = authenticate(request, username=user_name, password=password)
+                if user:
+                    if user.is_active:
+                        auth_login(request, user)
+            except Exception as e:
+                print e.args
+
+        else:
+            messages.add_message(request, messages.ERROR, 'Data not valid please try again.')
 
     return redirect(home)
 
@@ -131,10 +135,7 @@ def add_comment(request):
         cm_form = CommentForm(request.POST)
         news_id = request.POST.get('news_id', None)
         parent_comment_id = request.POST.get('parent_comment_id', None)
-        print parent_comment_id
-        print cm_form
         if cm_form.is_valid():
-            print cm_form
             comment = cm_form.save(commit=False)
             comment.news_id = news_id
             comment.parent_comment_id = parent_comment_id if parent_comment_id else None

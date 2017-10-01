@@ -13,18 +13,20 @@ class News(models.Model):
     link_href = models.CharField(max_length=255)
     hn_user = models.CharField(max_length=50)
     age = models.CharField(max_length=50)
-    created_time = models.DateTimeField(auto_now_add=True)
     score = models.IntegerField(default=0)
     total_comments = models.IntegerField(default=0)
     rank = models.IntegerField(default=0)
     show_on_site = models.BooleanField(default=True)
     is_crawled = models.BooleanField(default=True)
+    hn_id_code = models.CharField(max_length=150)
+
+    created_time = models.DateTimeField(auto_now_add=True)
+    latest_created_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['rank']
+        ordering = ['rank', 'created_time']
 
     def __str__(self):
-        print self.story_text
         return self.story_text
 
     def __unicode__(self):
@@ -55,7 +57,7 @@ class Comment(models.Model):
         return self.text
 
     def save(self, *args, **kwargs):
-        if self.news and not self.news.is_crawled:
+        if self.news:
             self.news.total_comments += 1
             self.news.save()
         super(Comment, self).save(*args, **kwargs)
@@ -76,4 +78,5 @@ def _mymodel_delete(sender, instance, **kwargs):
     if instance.news:
         instance.news.total_comments -= 1
         instance.news.save()
+        
 # Create your models here.

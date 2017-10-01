@@ -5,6 +5,7 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 from items import NewsBotItem, CommentBotItem
+from news.models import News, Comment
 
 
 class NewsBotPipeline(object):
@@ -12,8 +13,21 @@ class NewsBotPipeline(object):
 
     def process_item(self, item, spider):
         if isinstance(item, NewsBotItem):
-            news_id = item['comment_url_id']
-            item = item.save()
+            # print item
+            news_id = item['hn_id_code']
+            try:
+                from datetime import datetime
+                obj = News.objects.get(hn_id_code=news_id)
+                print obj
+                obj.rank = item.get('rank', 0)
+                obj.total_comment = item.get('total_comments', 0)
+                obj.score = item.get('score', 0)
+                obj.latest_created_time = datetime.now()
+                obj.save()
+                item = obj
+            except Exception as e:
+                print '>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+                item = item.save()
             self.last_save_news_obj.setdefault(str(news_id), [item, None])
 
         elif isinstance(item, CommentBotItem):

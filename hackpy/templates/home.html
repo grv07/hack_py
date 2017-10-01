@@ -81,7 +81,20 @@
                 </p>
             </div>
         </div>
-        <br>
+        {% empty %}
+        <p>Welcome to <b>hack_py</b>.
+            <br>
+            You almost done :).
+            <br>
+            <br>
+            For getting data from hacker news server you need a
+            <strong>wifi connection
+                and a terminal</strong> to run following commands<br>
+            > ./crawl.sh (location /hackpy_code/news_bot)<br>
+            # Please make it executable first with <strong>chmod u+x crawl.sh</strong>
+            <br>
+            <b>Add this file to your crontab to get news updates.</b>
+        </p>
         {% endfor %}
     <!--End jumboo-->
     </div>

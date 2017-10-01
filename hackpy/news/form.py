@@ -23,3 +23,10 @@ class CommentForm(ModelForm):
         model = Comment
         fields = ['hn_user', 'text', 'news_id', 'reply_nested_level', 'is_reply',
                   'parent_comment_id']
+
+
+class RegisterForm(forms.Form):
+    user_name = forms.CharField()
+    email = forms.EmailField()
+    password = forms.CharField()
+

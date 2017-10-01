@@ -40,7 +40,7 @@ class ExampleSpider(BaseSpider):
     @staticmethod
     def get_default_row_dict():
         base_k_list = ['rank', 'story_text', 'total_comments', 'link_href', 'hn_user',
-                         'age', 'score', 'comment_url_id']
+                         'age', 'score', 'hn_id_code']
         return dict(zip(base_k_list, [None]*len(base_k_list)))
 
     def parse_comment(self, response):
@@ -112,22 +112,22 @@ class ExampleSpider(BaseSpider):
                 value = Selector(text=v).xpath('//span[@class="score"]/text()').extract_first()
                 row['score'] = int(value.split(' ')[0]) if value else 0
 
-            if not row['comment_url_id']:
+            if not row['hn_id_code']:
                 value = Selector(text=v).xpath('//tr[@class="athing"]/@id').extract_first()
-                row['comment_url_id'] = int(value) if represents_int(value) else 0
+                row['hn_id_code'] = int(value) if represents_int(value) else 0
 
             if all([None for i, v in row.items() if v==None]):
                 print 'Go for save >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
                 data = row.copy()
                 row = self.get_default_row_dict()
                 self.comment_url.append('https://news.ycombinator.com/item?id=15318440')
-                news_id = data['comment_url_id']
+                news_id = data['hn_id_code']
                 item = NewsBotItem(data)
                 request = scrapy.Request(url='https://news.ycombinator.com/item?id='+str(news_id),
                                          callback=self.parse_comment)
-                request.meta['item'] = item
-                request.meta['news_id'] = int(news_id)
-                yield request
+                # request.meta['item'] = item
+                # request.meta['news_id'] = int(news_id)
+                yield item
 
             if index % 2:
                 row = self.get_default_row_dict()
