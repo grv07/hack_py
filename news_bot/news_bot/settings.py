@@ -12,11 +12,11 @@
 import os
 import sys
 
-DJANGO_PROJECT_PATH = '/home/kale/hackpy/hackpy'
+DIR_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+DJANGO_PROJECT_PATH = DIR_PATH+'/hackpy'
 DJANGO_SETTINGS_MODULE = 'hackpy.settings'
 
 sys.path.insert(0, DJANGO_PROJECT_PATH)
-print sys.path
 os.environ['DJANGO_SETTINGS_MODULE'] = DJANGO_SETTINGS_MODULE
 
 BOT_NAME = 'news_bot'

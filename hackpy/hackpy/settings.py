@@ -13,12 +13,11 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 import sys
 
-sys.path.append('/home/kale/hackpy/news_bot')
-print sys.path
-print os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DIR_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+sys.path.append(DIR_PATH+"/news_bot")
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
