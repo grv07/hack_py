@@ -1,4 +1,4 @@
-asn1crypto==0.22.0
+asn1crypto==0.23.0
 attrs==17.2.0
 Automat==0.6.0
 cffi==1.11.0
@@ -6,6 +6,7 @@ constantly==15.1.0
 cryptography==2.0.3
 cssselect==1.0.1
 Django==1.11.5
+django-kronos==1.0
 enum34==1.1.6
 hyperlink==17.3.1
 idna==2.6
@@ -19,12 +20,15 @@ pyasn1-modules==0.1.4
 pycparser==2.18
 PyDispatcher==2.0.5
 pyOpenSSL==17.3.0
+python-crontab==2.2.4
+python-dateutil==2.6.1
 pytz==2017.2
 queuelib==1.4.2
 Scrapy==1.4.0
 scrapy-djangoitem==1.1.1
+scrapyd==1.2.0
 service-identity==17.0.0
 six==1.11.0
-Twisted==17.5.0
+Twisted==17.9.0
 w3lib==1.18.0
-zope.interface==4.4.2
+zope.interface==4.4.3
