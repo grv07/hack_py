@@ -19,12 +19,13 @@ class News(models.Model):
     show_on_site = models.BooleanField(default=True)
     is_crawled = models.BooleanField(default=True)
     hn_id_code = models.CharField(max_length=150)
+    page = models.IntegerField(default=1)
 
     created_time = models.DateTimeField(auto_now_add=True)
     latest_created_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['rank', 'created_time']
+        ordering = ['page', 'rank', '-created_time']
 
     def __str__(self):
         return self.story_text

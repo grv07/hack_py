@@ -17,6 +17,7 @@ class NewsBotPipeline(object):
             try:
                 from datetime import datetime
                 obj = News.objects.get(hn_id_code=news_id)
+                obj.page = 1
                 obj.rank = item.get('rank', 0)
                 obj.total_comments = item.get('total_comments', 0)
                 obj.score = item.get('score', 0)
@@ -24,7 +25,13 @@ class NewsBotPipeline(object):
                 obj.save()
                 item = obj
             except Exception as e:
-                print '>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+                try:
+                    obj = News.objects.get(rank=item.get('rank'), page=1)
+                    obj.page = 2
+                    obj.save()
+                except Exception as e:
+                    print e.args
+                item['page'] = 1
                 item = item.save()
             self.last_save_news_obj.setdefault(str(news_id), [item, None])
 

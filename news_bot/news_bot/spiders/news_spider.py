@@ -42,7 +42,7 @@ class ExampleSpider(BaseSpider):
         return dict(zip(base_k_list, [None]*len(base_k_list)))
 
     def parse_comment(self, response):
-        description = response.xpath("//table[@class='comment-tree']/tr").extract()
+        description = response.xpath("//table[@class='comment-tree']/tr").extract()[:100]
         yield response.meta["item"]
         for i, v in enumerate(description):
             comment_dict = {}
@@ -51,13 +51,13 @@ class ExampleSpider(BaseSpider):
                 comment_dict['hn_user'] = value
             if not comment_dict.setdefault('hn_id_code', None):
                 value = Selector(text=v).xpath('//div[@class="reply"]/p/font/u/a/@href').extract_first()
-                par = urlparse.parse_qs(urlparse.urlparse(value).query) if value else {'id': None}
+                par = urlparse.parse_qs(urlparse.urlparse(value).query) if value else {'id': [0]}
                 comment_dict['hn_id_code'] = par.get('id', [0])[0]
             if not comment_dict.setdefault('text', None):
                 value = Selector(text=v).xpath('//div[@class="comment"]/span/text()').extract_first('')
                 value += Selector(text=v).xpath('//div[@class="comment"]/span/i/text()').extract_first('')
                 value += Selector(text=v).xpath('//div[@class="comment"]/span/p/text()').extract_first('')
-                comment_dict['text'] = value
+                comment_dict['text'] = value if value else 'NA'
             if not comment_dict.setdefault('age', None):
                 value = Selector(text=v).xpath('//span/span[@class="age"]/a/text()').extract_first()
                 value = value if value else ''
@@ -76,7 +76,7 @@ class ExampleSpider(BaseSpider):
 
     def parse(self, response):
         description = response.xpath("//table[@class='itemlist']/tr[not(re:test(@class, "
-                                     "'(spacer)'))]").extract()[:3]
+                                     "'(spacer)'))]").extract()
         row = self.get_default_row_dict()
         # print description
         for i, v in enumerate(description):
@@ -125,6 +125,7 @@ class ExampleSpider(BaseSpider):
                 self.comment_url.append('https://news.ycombinator.com/item?id=15318440')
                 news_id = data['hn_id_code']
                 item = NewsBotItem(data)
+                yield item
                 request = scrapy.Request(url='https://news.ycombinator.com/item?id='+str(news_id),
                                          callback=self.parse_comment)
                 request.meta['item'] = item
