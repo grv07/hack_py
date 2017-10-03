@@ -26,16 +26,10 @@ def register_home(request):
         password = request.POST.get('password')
         r_f = RegisterForm(request.POST)
         if r_f.is_valid():
-            try:
-                user = User.objects.filter(Q(username=user_name) | Q(email=email))[0]
-                if user.username == user_name:
-                    messages.add_message(request, messages.ERROR, 'please select unique username')
-                elif user.email == email:
-                    messages.add_message(request, messages.ERROR, 'please select unique email')
+            user = User.objects.filter(Q(username=user_name) | Q(email=email))
+            if user:
+                messages.add_message(request, messages.ERROR, 'User already exist with this email/username')
                 return redirect(home)
-            except User.DoesNotExist:
-                print 'good to go ..'
-                pass
             try:
                 User.objects.create_user(username=user_name, password=password, email=email)
                 user = authenticate(request, username=user_name, password=password)
@@ -72,12 +66,20 @@ def login_home(request):
 
 
 def home(request):
-    newses = News.objects.distinct()[:30]
+    # Show top 30 news only.
+    search_on_text = request.GET.get('search_on')
+    if search_on_text:
+        news = News.objects.filter(story_text__search=search_on_text)
+        # news = News.objects.distinct()[:30] if not news else news
+        if not news:
+            messages.add_message(request, messages.SUCCESS, 'news not found for this keyword.')
+    else:
+        news = News.objects.distinct()[:30]
     u_v_c = []
     if request.user.is_authenticated:
         u_v_c = UpVoteCounter.objects.values_list('news_id', flat=True).\
-            filter(user=request.user, news__in=[n.id for n in newses]).distinct()
-    return render(request, 'home.html', {'newses': newses, 'u_v_c': list(u_v_c)})
+            filter(user=request.user, news__in=[n.id for n in news]).distinct()
+    return render(request, 'home.html', {'newses': news, 'u_v_c': list(u_v_c)})
 
 
 @login_required
@@ -148,4 +150,14 @@ def add_comment(request):
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         return redirect(home)
+
+
+def search_text(request):
+    search_on_text = request.GET.get('s_on')
+    news = None
+    if search_on_text:
+        news = News.objects.filter(body_text__search=search_on_text)
+    return redirect(home, news)
+
 # Create your views here.
+

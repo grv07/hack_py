@@ -20,6 +20,7 @@ from news.views import *
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', home),
+    url(r'^home/$', home),
     url(r'^comment/(?P<news_id>\d+)/$', comment_list),
     url(r'^add/comment/$', add_comment),
     url(r'^add/reply/$', reply_form),

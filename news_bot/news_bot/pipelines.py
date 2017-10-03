@@ -25,12 +25,12 @@ class NewsBotPipeline(object):
                 obj.save()
                 item = obj
             except Exception as e:
-                try:
-                    obj = News.objects.get(rank=item.get('rank'), page=1)
-                    obj.page = 2
-                    obj.save()
-                except Exception as e:
-                    print e.args
+                # try:
+                #     obj = News.objects.get(rank=item.get('rank'), page=1)
+                #     obj.page = 2
+                #     obj.save()
+                # except Exception as e:
+                #     print e.args
                 item['page'] = 1
                 item = item.save()
             self.last_save_news_obj.setdefault(str(news_id), [item, None])

@@ -29,7 +29,7 @@
     {% block nav_bar %}
     <div class="nav nav-pills" style="background-color: lightblue;">
         <div class="row col-md-12">
-        <div class="col-md-9">
+        <div class="col-md-7">
             &nbsp;
                 <a href="/" style="color:#e04218"><strong>hack_py</strong></a>
             &nbsp;|&nbsp;<a href="/" style="color:#e04218">home</a>
@@ -37,13 +37,28 @@
             &nbsp;|&nbsp;<a href="/add/news/" style="color:#e04218">post news</a>
             {% endif %}
         </div>
-        <div class="float-right col-md-3">
-            {% if request.user.is_authenticated %}
-            <span><a href="javascript:void(0);">{{request.user.username}}</a> | <a href="/logout/">logout</a></span>
-            {% else %}
-                <a data-toggle="modal" data-target="#myModal" href="/" style="color:#e04218"> login/register</a>
-            {% endif %}
-        </div>
+        <div class="float-right col-md-5">
+            <div class="row col-md-12">
+                <div class="col-md-7">
+                    <form action="/">
+                        <div class="input-group">
+                      <input style="border-radius: 0px;" type="text" class="form-control" name="search_on" placeholder="search: news">
+                        <span class="input-group-btn">
+                        <button style="border-radius: 0px;" class="btn btn-secondary" type="submit">
+                            <i class="fa fa-search fa-1x"></i>
+                        </button>
+                      </span>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-5">
+                    {% if request.user.is_authenticated %}
+                    <span><a href="javascript:void(0);">{{request.user.username}}</a> | <a href="/logout/">logout</a></span>
+                    {% else %}
+                        <a data-toggle="modal" data-target="#myModal" href="/" style="color:#e04218"> login/register</a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
         </div>
     </div>
@@ -90,6 +105,8 @@
             For getting data from hacker news server you need a
             <strong>wifi connection
                 and a terminal</strong> to run following commands<br>
+            > cd ~/hackpy_code/news_bot<br>
+            > chmod u+x crawl.sh<br>
             > ./crawl.sh (location /hackpy_code/news_bot)<br>
             # Please make it executable first with <strong>chmod u+x crawl.sh</strong>
             <br>
@@ -109,6 +126,10 @@
             $('#any_msg').text(msg)
             $('#myModal').modal('show')
             callback();
+        }
+
+        function initiate_search(on_text){
+
         }
     </script>
   </body>

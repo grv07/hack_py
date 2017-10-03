@@ -105,3 +105,11 @@ ROBOTSTXT_OBEY = True
 import django
 
 django.setup()
+
+from news.models import News, Comment
+news = News.objects.filter(page=1)
+for ne in news:
+    ne.page = 2
+    ne.save()
+
+print '+++++++++++++++++++++++++++++++++++++++'
