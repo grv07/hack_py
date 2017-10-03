@@ -54,7 +54,7 @@ class Comment(models.Model):
     created_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['parent_comment__id', 'created_time']
+        ordering = ['created_time', 'parent_comment__id']
 
     def __unicode__(self):
         return self.text
