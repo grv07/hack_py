@@ -37,3 +37,5 @@ Steps to setup postgres
 5.CREATE USER root WITH PASSWORD 'root';
 
 6.GRANT ALL PRIVILEGES ON DATABASE hnews TO root;
+
+#Now create a virtual env and rn all migrations file.
