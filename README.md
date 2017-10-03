@@ -1,4 +1,9 @@
 # hack_py
+
+How to scrap msg:
+![Alt text](/../screen/screen/scrap.png?raw=true "Optional Title")
+
+
 Home page:
 ![Alt text](/../screen/screen/home.png?raw=true "Optional Title")
 
