@@ -1,6 +1,6 @@
 # hack_py
 
-How to scrap msg:
+Help page
 ![Alt text](/../screen/screen/scrap.png?raw=true "Optional Title")
 
 
